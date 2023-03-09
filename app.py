@@ -14,7 +14,7 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 #titulo
-st.title("Comparador de Columnas")
+st.title("Comparar Columnas")
 #descripcion
 st.write('Este script permite comparar columnas y ver sus coincidencias o valores unicos!')
 st.write("")
@@ -57,8 +57,27 @@ if archivo is not None:
         col2.write(dataframe_solo_B)
         col3.write(dataframe_coinciden)
 
-st.write("")
-st.write("")
+        # Descargar archivo
+        def to_excel(df1, df2, df3):
+            output = io.BytesIO()
+            writer = pd.ExcelWriter(output, engine='xlsxwriter')
+            df1.to_excel(writer, index=False, sheet_name='Coinciden')
+            df2.to_excel(writer, index=False, sheet_name='Solo en A')
+            df3.to_excel(writer, index=False, sheet_name='Solo en B')
+            writer.save()
+            processed_data = output.getvalue()
+            return processed_data
+
+        def get_table_download_link(df1, df2, df3):
+            val = to_excel(df1, df2, df3)
+            b64 = base64.b64encode(val)
+            return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="data.xlsx">Descargar excel</a>'
+
+        st.markdown(get_table_download_link(dataframe_coinciden, dataframe_solo_A, dataframe_solo_B), unsafe_allow_html=True)
+        st.markdown("")
+
+    st.write("")
+    st.write("")
 
 # si ingreso manualmente la informacion
 def to_excel(df1,df2,df3):
@@ -73,8 +92,8 @@ def to_excel(df1,df2,df3):
 
 def get_table_download_link(df1,df2,df3):
     val = to_excel(df1,df2,df3)
-    b64 = base64.b64encode(val).decode()
-    return f'<a href="data:application/octet-stream;base64,{b64}" download="data.xlsx">Descargar excel</a>'
+    b64 = base64.b64encode(val)
+    return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="data.xlsx">Descargar excel</a>'
 
 st.write("**Ingresa los datos de forma manual**")
 columna_A = st.text_area("Columna A")
@@ -102,6 +121,6 @@ if st.button("Comparar"):
     col2.write(dataframe_solo_B)
     col3.write(dataframe_coinciden)
 
-    # Descargar archivo
-    st.markdown(get_table_download_link(dataframe_coinciden, dataframe_solo_A,dataframe_solo_B), unsafe_allow_html=True)
-    
+    # Descargar excell
+    st.markdown(get_table_download_link(dataframe_coinciden,dataframe_solo_A,dataframe_solo_B), unsafe_allow_html=True)
+    st.markdown("Descargar excel")
