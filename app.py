@@ -76,8 +76,8 @@ if archivo is not None:
         st.markdown(get_table_download_link(dataframe_coinciden, dataframe_solo_A, dataframe_solo_B), unsafe_allow_html=True)
         st.markdown("")
 
-    st.write("")
-    st.write("")
+st.write("")
+st.write("")
 
 # si ingreso manualmente la informacion
 def to_excel(df1,df2,df3):
@@ -123,4 +123,3 @@ if st.button("Comparar"):
 
     # Descargar excell
     st.markdown(get_table_download_link(dataframe_coinciden,dataframe_solo_A,dataframe_solo_B), unsafe_allow_html=True)
-    st.markdown("Descargar excel")
