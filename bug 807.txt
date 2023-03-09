@@ -1,0 +1,1 @@
+Funcion " "  qs_temp , si en realidad estaria bien que devuelva un solo objeto teniendo 4, o no se contemplo.

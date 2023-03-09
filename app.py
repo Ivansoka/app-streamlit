@@ -1,6 +1,8 @@
 import pandas as pd
 import streamlit as st
 import logging
+import io
+import base64
 
 logging.basicConfig(
     level=logging.INFO,
@@ -59,6 +61,21 @@ st.write("")
 st.write("")
 
 # si ingreso manualmente la informacion
+def to_excel(df1,df2,df3):
+    output = io.BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    df1.to_excel(writer, index=False, sheet_name='Coinciden')
+    df2.to_excel(writer, index=False, sheet_name='Solo en A')
+    df3.to_excel(writer, index=False, sheet_name='Solo en B')
+    writer.save()
+    processed_data = output.getvalue()
+    return processed_data
+
+def get_table_download_link(df1,df2,df3):
+    val = to_excel(df1,df2,df3)
+    b64 = base64.b64encode(val).decode()
+    return f'<a href="data:application/octet-stream;base64,{b64}" download="data.xlsx">Descargar excel</a>'
+
 st.write("**Ingresa los datos de forma manual**")
 columna_A = st.text_area("Columna A")
 columna_B = st.text_area("Columna B")
@@ -84,3 +101,7 @@ if st.button("Comparar"):
     col1.write(dataframe_solo_A)
     col2.write(dataframe_solo_B)
     col3.write(dataframe_coinciden)
+
+    # Descargar archivo
+    st.markdown(get_table_download_link(dataframe_coinciden, dataframe_solo_A,dataframe_solo_B), unsafe_allow_html=True)
+    
